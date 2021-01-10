@@ -11,13 +11,19 @@
      
        <div class="weather-wrap">
          <div class="location-box">
-           <div class="location">{{weather.name}}</div>
+          <!-- Checking if weather object is null. if null then do not print data  -->
+           <div class="location" v-if="weather">{{weather.name}}</div>
            <div class="date">{{dateBuildup()}}</div>
          </div>
        </div>
-       <div class="weather-box">
-         <div class="temp"> degree C</div>
-         <div class="weather">{{weather.weather}}</div>
+        <!-- Checking if weather object is null. if null then do not print data  -->
+       <div class="weather-box" v-if="weather">
+        <!-- weather object has main key inside main key there is another key called temp which is the temperature -->
+         <div class="temp"> {{weather.main.temp}} ° C</div>
+         <!-- Weather has an array wether it's not an object so in order to access an array you have to access it through index not key**  -->
+         <div class="weather">{{weather.weather[0].main}} <br>
+           <small>{{weather.weather[0].description}}</small>
+         </div>
        </div>
     </main>
   </div>
@@ -31,13 +37,14 @@ export default {
       api_key:'c97283cde2c0a43b427c06b329197c72',
       url_base:'https://api.openweathermap.org/data/2.5/',
       query:'',
-      weather:{}
+      weather:null
     }
   },
   methods:{
     fetchweather(e){
       if(e.key == "Enter"){
-        fetch(`${this.url_base}weather?q=${this.query}&appid=${this.api_key}`)
+        //metric query parameter shows temp in celius
+        fetch(`${this.url_base}weather?q=${this.query}&appid=${this.api_key}&units=metric`)
         .then(res=>{
           return res.json();
         }).then(this.setResults);
